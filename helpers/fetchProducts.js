@@ -1,15 +1,22 @@
 const { consoleLog } = require('mocha/lib/reporters/base');
 
-const fetchProducts = () => {
+const fetchProducts = async () => {
   // seu código aqui
-  const f = fetch(
-    'https://api.mercadolibre.com/sites/MLB/search?q=$computador',
-  )
-  .then((response) => response.json())
-  .then((data) => consoleLog(data));
+  const url = 'https://api.mercadolibre.com/sites/MLB/search?q=$computador';
+  const dataAPI = await fetch(url)
+    .then((response) => response.json())
+    .then((data) =>
+      data.results.map((result) => {
+        const modification = {
+          sku: result.id,
+          name: result.title,
+          image: result.thumbnail,
+        };
+        return modification;
+      })); // retornar o array com 50 resultados da busca
+  return dataAPI;
+  // await console.log('dataAPI', dataAPI);
 };
-
-// fetchProducts();
 
 if (typeof module !== 'undefined') {
   module.exports = {
