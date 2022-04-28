@@ -1,5 +1,7 @@
 // const { fetchProducts } = require('./helpers/fetchProducts');
+// const getSavedCartItems = require("./helpers/getSavedCartItems");
 // const { fetchItem } = require("./helpers/fetchItem");
+const cart = document.querySelector('.cart__items');
 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -21,7 +23,8 @@ function getSkuFromProductItem(item) {
 
 function cartItemClickListener(event) {
   // coloque seu código aqui
-  document.querySelector('.cart__items').removeChild(event.target);
+  cart.removeChild(event.target);
+  saveCartItems(cart, 'items');
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
@@ -33,7 +36,6 @@ function createCartItemElement({ sku, name, salePrice }) {
 }
 
 const addItemToCart = async (item) => {
-  const cart = document.querySelector('.cart__items');
   const clicked = item.target.parentNode;
   const productId = getSkuFromProductItem(clicked);
   const product = await fetchItem(productId);
@@ -43,6 +45,7 @@ const addItemToCart = async (item) => {
     salePrice: product.price,
   };
   cart.appendChild(createCartItemElement(objProduct));
+  saveCartItems(cart, 'items');
 };
 
 function createProductItemElement({ sku, name, image }) {
@@ -76,4 +79,6 @@ const addProducts = async () => {
 };
 addProducts();
 
-window.onload = () => {};
+window.onload = () => {
+  getSavedCartItems('items', cartItemClickListener);
+};
