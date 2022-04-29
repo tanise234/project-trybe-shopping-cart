@@ -1,4 +1,5 @@
 const cart = document.querySelector('.cart__items');
+const oldPrice = JSON.parse(localStorage.getItem('total price'));
 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -19,8 +20,8 @@ function getSkuFromProductItem(item) {
 }
 
 const calculatePrice = (plus, minus) => {
-  const oldPrice = JSON.parse(localStorage.getItem('total price'));
   localStorage.setItem('total price', JSON.stringify(oldPrice + plus - minus));
+  document.getElementById('total').innerText = `Total: ${(oldPrice + plus - minus).toFixed(2)}`;
 };
 
 function cartItemClickListener(event) {
@@ -30,6 +31,16 @@ function cartItemClickListener(event) {
   const priceToRemove = parseFloat(arrayText[1]);
   calculatePrice(0, priceToRemove);
 }
+
+const displayTotalPrice = () => {
+  const displayPrice = document.createElement('div');
+  displayPrice.className = 'total-price';
+  const total = document.createElement('h3');
+  total.id = 'total';
+  displayPrice.appendChild(total);
+  document.querySelector('.cart').appendChild(displayPrice);
+};
+displayTotalPrice();
 
 function createCartItemElement({ sku, name, salePrice }) {
   const li = document.createElement('li');
@@ -63,7 +74,7 @@ function createProductItemElement({ sku, name, image }) {
   const button = createCustomElement(
     'button',
     'item__add',
-    'Adicionar ao carrinho!'
+    'Adicionar ao carrinho!',
   );
   button.addEventListener('click', addItemToCart);
   section.appendChild(button);
@@ -86,4 +97,5 @@ addProducts();
 
 window.onload = () => {
   getSavedCartItems('items', cartItemClickListener);
+  document.getElementById('total').innerText = `Total: ${oldPrice.toFixed(2)}`;
 };
