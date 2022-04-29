@@ -2,6 +2,14 @@ const cart = document.querySelector('.cart__items');
 const totalPrice = 'total price';
 const oldPrice = () => JSON.parse(localStorage.getItem(totalPrice));
 
+const createLoadingElement = () => {
+  const loadingText = document.createElement('p');
+  loadingText.innerText = 'Carregando...';
+  loadingText.className = 'loading';
+  document.querySelector('.items').appendChild(loadingText);
+};
+createLoadingElement();
+
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -34,7 +42,7 @@ const totalDisplayed = document.getElementById('total');
 const calculatePrice = (plus, minus) => {
   const op = oldPrice();
   localStorage.setItem(totalPrice, JSON.stringify(op + plus - minus));
-  totalDisplayed.innerText = `${(op + plus - minus)}`;
+  totalDisplayed.innerText = `${op + plus - minus}`;
 };
 
 function cartItemClickListener(event) {
@@ -86,8 +94,10 @@ function createProductItemElement({ sku, name, image }) {
 
 const addProducts = async () => {
   const products = await fetchProducts();
+  const sectionItems = document.querySelector('.items');
+  const loading = document.querySelector('.loading');
+  sectionItems.removeChild(loading);
   products.forEach((product) => {
-    const sectionItems = document.querySelector('.items');
     const objProduct = {
       sku: product.id,
       name: product.title,
