@@ -1,6 +1,3 @@
-// const { fetchProducts } = require('./helpers/fetchProducts');
-// const getSavedCartItems = require("./helpers/getSavedCartItems");
-// const { fetchItem } = require("./helpers/fetchItem");
 const cart = document.querySelector('.cart__items');
 
 function createProductImageElement(imageSource) {
@@ -21,10 +18,17 @@ function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
 }
 
+const calculatePrice = (plus, minus) => {
+  const oldPrice = JSON.parse(localStorage.getItem('total price'));
+  localStorage.setItem('total price', JSON.stringify(oldPrice + plus - minus));
+};
+
 function cartItemClickListener(event) {
-  // coloque seu código aqui
   cart.removeChild(event.target);
   saveCartItems(cart, 'items');
+  const arrayText = event.target.innerText.split('$');
+  const priceToRemove = parseFloat(arrayText[1]);
+  calculatePrice(0, priceToRemove);
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
@@ -46,6 +50,7 @@ const addItemToCart = async (item) => {
   };
   cart.appendChild(createCartItemElement(objProduct));
   saveCartItems(cart, 'items');
+  calculatePrice(product.price, 0);
 };
 
 function createProductItemElement({ sku, name, image }) {
@@ -58,7 +63,7 @@ function createProductItemElement({ sku, name, image }) {
   const button = createCustomElement(
     'button',
     'item__add',
-    'Adicionar ao carrinho!',
+    'Adicionar ao carrinho!'
   );
   button.addEventListener('click', addItemToCart);
   section.appendChild(button);
