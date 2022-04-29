@@ -1,5 +1,6 @@
 const cart = document.querySelector('.cart__items');
-const oldPrice = JSON.parse(localStorage.getItem('total price'));
+const totalPrice = 'total price';
+const oldPrice = () => JSON.parse(localStorage.getItem(totalPrice));
 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -19,19 +20,6 @@ function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
 }
 
-const calculatePrice = (plus, minus) => {
-  localStorage.setItem('total price', JSON.stringify(oldPrice + plus - minus));
-  document.getElementById('total').innerText = `Total: ${(oldPrice + plus - minus).toFixed(2)}`;
-};
-
-function cartItemClickListener(event) {
-  cart.removeChild(event.target);
-  saveCartItems(cart, 'items');
-  const arrayText = event.target.innerText.split('$');
-  const priceToRemove = parseFloat(arrayText[1]);
-  calculatePrice(0, priceToRemove);
-}
-
 const displayTotalPrice = () => {
   const displayPrice = document.createElement('div');
   displayPrice.className = 'total-price';
@@ -41,6 +29,21 @@ const displayTotalPrice = () => {
   document.querySelector('.cart').appendChild(displayPrice);
 };
 displayTotalPrice();
+const totalDisplayed = document.getElementById('total');
+
+const calculatePrice = (plus, minus) => {
+  const op = oldPrice();
+  localStorage.setItem(totalPrice, JSON.stringify(op + plus - minus));
+  totalDisplayed.innerText = `${(op + plus - minus)}`;
+};
+
+function cartItemClickListener(event) {
+  cart.removeChild(event.target);
+  saveCartItems(cart, 'items');
+  const arrayText = event.target.innerText.split('$');
+  const priceToRemove = parseFloat(arrayText[1]);
+  calculatePrice(0, priceToRemove);
+}
 
 function createCartItemElement({ sku, name, salePrice }) {
   const li = document.createElement('li');
@@ -95,7 +98,28 @@ const addProducts = async () => {
 };
 addProducts();
 
+const removeAllProducts = () => {
+  localStorage.removeItem('items');
+  localStorage.removeItem(totalPrice);
+  totalDisplayed.innerText = 'Total: R$ 0.00';
+  const totalItems = cart.childElementCount;
+  for (i = 0; i < totalItems; i += 1) {
+    cart.removeChild(cart.firstElementChild);
+  }
+};
+
+const emptyCart = () => {
+  document
+    .querySelector('.empty-cart')
+    .addEventListener('click', removeAllProducts);
+};
+emptyCart();
+
 window.onload = () => {
   getSavedCartItems('items', cartItemClickListener);
-  document.getElementById('total').innerText = `Total: ${oldPrice.toFixed(2)}`;
+  if (oldPrice()) {
+    totalDisplayed.innerText = `${oldPrice()}`;
+  } else {
+    totalDisplayed.innerText = 'Total: R$ 0.00';
+  }
 };
