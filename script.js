@@ -93,7 +93,8 @@ function createProductItemElement({ sku, name, image }) {
 }
 
 const addProducts = async () => {
-  const products = await fetchProducts();
+  const productsRaw = await fetchProducts('computador');
+  const products = productsRaw.results;
   const sectionItems = document.querySelector('.items');
   const loading = document.querySelector('.loading');
   sectionItems.removeChild(loading);
