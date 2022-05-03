@@ -47,7 +47,7 @@ const calculatePrice = (plus, minus) => {
 
 function cartItemClickListener(event) {
   cart.removeChild(event.target);
-  saveCartItems(cart, 'items');
+  saveCartItems(cart.innerHTML);
   const arrayText = event.target.innerText.split('$');
   const priceToRemove = parseFloat(arrayText[1]);
   calculatePrice(0, priceToRemove);
@@ -71,7 +71,7 @@ const addItemToCart = async (item) => {
     salePrice: product.price,
   };
   cart.appendChild(createCartItemElement(objProduct));
-  saveCartItems(cart, 'items');
+  saveCartItems(cart.innerHTML);
   calculatePrice(product.price, 0);
 };
 
