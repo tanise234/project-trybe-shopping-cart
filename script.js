@@ -127,7 +127,8 @@ const emptyCart = () => {
 emptyCart();
 
 window.onload = () => {
-  getSavedCartItems('items', cartItemClickListener);
+  cart.innerHTML = getSavedCartItems();
+  cart.childNodes.forEach((item) => item.addEventListener('click', cartItemClickListener));
   if (oldPrice()) {
     totalDisplayed.innerText = `${oldPrice()}`;
   } else {
